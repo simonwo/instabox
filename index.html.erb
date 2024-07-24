@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Instabox</title>
+        <style type="text/css">
+            input[type=search] { width: calc(100vw - 3em); font-size: 200%; box-sizing: border-box; margin: 1em; }
+            img { max-height: 100px; max-width: 100px; }
+            .searching [data-tags]:not(.match) { display: none }
+        </style>
+        <script type="text/javascript">
+            const search = function(value) {
+                document.querySelector('body').classList.toggle("searching", value != "")
+
+                const all = document.querySelectorAll("[data-words], [data-tags]")
+                Array.from(all).forEach(node => node.classList.remove("match"))
+
+                const matches = document.querySelectorAll('[data-words~="'+value+'"], [data-tags~="'+value+'"]')
+                Array.from(matches).forEach(match => match.classList.add("match"))
+            }
+
+            window.addEventListener("load", () => {
+                const box = document.getElementById("search")
+                box.addEventListener("input", e => search(e.target.value))
+                search(box.value)
+            })
+        </script>
+    </head>
+    <body>
+        <input type="search" id="search" placeholder="Search words and #tags">
+        <% for post in posts %>
+        <a href="<%= post.href %>"
+           title="<%= post.title %>"
+           data-owner-id="<%= post.node.owner.id %>"
+           data-tags="<%= post.tags.join(' ') %>"
+           data-words="<%= post.words.join(' ') %>"
+        >
+            <img src="<%= post.thumb %>">
+        </a>
+        <% end %>
+    </body>
+</html>
