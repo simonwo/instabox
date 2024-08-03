@@ -11,12 +11,21 @@
             body { display: flex; column-gap: 1em; grid-auto-rows: calc(100vh - 2em); grid-auto-columns: fit-content(30vw) 1fr; flex-basis: 0;}
             #media { flex-basis: 0 }
             pre { width: 100%; white-space: pre-line; }
+            .caption { display: block; color: inherit; text-decoration-style: dotted; }
+            .caption::before { content: attr(data-start); font-variant-numeric: tabular-nums; margin-right: 1ch; font-size: 60%; }
         </style>
+        <script type="text/javascript">
+            const setVideoTime = function(time) {
+                document.querySelector("video").currentTime = time
+            }
+        </script>
     </head>
     <body>
         <div id="media">
         <% if node.is_video %>
-            <video controls src="<%= video %>" poster="<%= images.first %>"></video>
+            <video controls src="<%= video %>" poster="<%= images.first %>">
+                <track kind="captions" label="Transcription" src="<%= track %>" srclang="en">
+            </video>
         <% end %>
         <% if images.size > 1 || !node.is_video %>
             <% for image in images %>
@@ -25,8 +34,18 @@
         <% end %>
         </div>
         <div id="text">
+            <% if node.owner.username %>
             <a href="https://instagram.com/<%= node.owner.username %>"><%= node.owner.username %></a>
+            <% end %>
             <pre><%= text %></pre>
+            <% for captionset in captions %>
+            <% for caption in captionset %>
+            <a class="caption" data-start="<%= sprintf('%05.2f', caption.start_time) %>"
+               href="javascript:setVideoTime(<%= caption.start_time.to_s %>)">
+               <%= caption.text %>
+            </a>
+            <% end %>
+            <% end %>
         </div>
     </body>
 </html>
