@@ -27,7 +27,7 @@
     </head>
     <body>
         <input type="search" id="search" placeholder="Search words and #tags">
-        <% for post in posts %>
+        <% for post in posts.reverse %>
         <a href="<%= post.href %>"
            title="<%= post.title %>"
            data-owner-id="<%= post.node.owner.id %>"
