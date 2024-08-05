@@ -62,8 +62,10 @@ rule('.html' => proc {|n| [n.pathmap('%X.json'), Rake::FileList[n.pathmap('%X*.m
   File.write t.name, POST_TEMPLATE.result_with_hash(post t.source)
 end
 
-rule(/_thumb.jpg/ => proc {|n| Rake::FileList[n.gsub(/_thumb.jpg/, '*.jpg')].first}) do |t|
-  sh "sips -Z 100 #{t.source} --out #{t.name}"
+rule(/_thumb.jpg/ => proc {|n| Rake::FileList[n.gsub(/_thumb.jpg/, '*.jpg')].reject{|t| t =~ /_thumb.jpg/}}) do |t|
+  unless t.source.nil?
+    sh "sips -Z 100 #{t.source} --out #{t.name}"
+  end
 end
 
 ALL_COMPRESSED_POSTS = Rake::FileList[File.join(DATA_DIR, '*.json.xz')]
