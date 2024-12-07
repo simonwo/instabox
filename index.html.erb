@@ -11,10 +11,14 @@
             const search = function(value) {
                 document.querySelector('body').classList.toggle("searching", value != "")
 
-                const all = document.querySelectorAll("[data-words], [data-tags]")
-                Array.from(all).forEach(node => node.classList.remove("match"))
+                const all = Array.from(document.querySelectorAll("[data-words], [data-tags]"))
+                all.forEach(node => node.classList.remove("match"))
 
-                const matches = document.querySelectorAll('[data-words~="'+value+'"], [data-tags~="'+value+'"]')
+                const matches = value.split(" ").reduce(
+                    (matches, word) => matches.intersection(
+                        new Set(Array.from(document.querySelectorAll('[data-words~="'+word+'"], [data-tags~="'+word+'"]')))),
+                    new Set(all));
+
                 Array.from(matches).forEach(match => match.classList.add("match"))
             }
 
